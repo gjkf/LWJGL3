@@ -14,14 +14,18 @@
  * this program; if not, see <http://www.gnu.org/licenses>.
  */
 
-package main.java.com.gjkf.lwjgl3;
+package com.gjkf.lwjgl3;
 
+import com.gjkf.lwjgl3.render.Texture;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.system.MemoryUtil;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -31,6 +35,8 @@ public class Main{
     private static long windowID, lastFPS;
     private static int mouseX = 0, mouseY = 0, fps;
     private static boolean inputEnabled = true;
+
+    private static Texture logo;
 
     public static void main(String[] args){
         GLFWErrorCallback errorCallback = Callbacks.errorCallbackPrint(System.err);
@@ -61,6 +67,13 @@ public class Main{
         glfwShowWindow(windowID);
 
         GLContext.createFromCurrent(); //Binds the OpenGL context to the current thread, the GLFW one
+
+        try{
+            logo = new Texture(new FileInputStream("resources/FlatAvatar.png"));
+            logo.bindTexture();
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
 
         //This is an example of callback input: we set up code that will run if the callback is triggered
         glfwSetCursorPosCallback(windowID, new GLFWCursorPosCallback(){
@@ -110,13 +123,15 @@ public class Main{
     private static void draw(){
         glClear(GL_COLOR_BUFFER_BIT); //Clear the contents of the window
 
+        logo.drawTexture(new int[]{150,0}, new int[]{600, 0}, new int[]{600, 600}, new int[]{150, 600});
+
         if(inputEnabled){
             glBegin(GL_QUADS);
             { //The order in which the points are made is really important!
                 glColor4f(0.0F, 1F, 0.4F, 0.5F);
                 glVertex2i(30, 50);
                 glColor4f(1F, 1F, 1F, 1F);
-                glVertex2i(30, 170);
+                glVertex2i(30, 100);
                 glColor4f(1F, 1F, 0F, 1F);
                 glVertex2i(100, 170);
                 glColor4f(0F, 1F, 0F, 0.2F);
@@ -136,16 +151,16 @@ public class Main{
             glEnd();
         }
 
-        glfwSwapBuffers(windowID); //Swaps the front and back frame-buffers. See this method as updating the window// contents.
+        glfwSwapBuffers(windowID); //Swaps the front and back frame-buffers. See this method as updating the window contents.
     }
 
     private static void input(){
         // This is an example of polled input: we check whether a key is being pressed
         inputEnabled = glfwGetKey(windowID, GLFW_KEY_SPACE) != GLFW_PRESS;
-//        System.out.println(mouseX + ", " + mouseY);
     }
 
-    private static void cleanUp() {
+    private static void cleanUp(){
+        logo.cleanUp();
         glfwDestroyWindow(windowID); //It's important to release the resources when the program has finished to prevent dreadful memory leaks
         glfwTerminate(); //Destroys all remaining windows and cursors
     }
@@ -161,7 +176,7 @@ public class Main{
     }
 
     /**
-     * Calculate the FPS and set it in the title bar
+     * Calculate the FPS
      */
 
     public static void updateFPS() {
