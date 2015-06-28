@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 15/06/15 Davide Cossu.
+ * Copyright (c) 28/06/15 Davide Cossu.
  * <p/>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,21 +14,30 @@
  * this program; if not, see <http://www.gnu.org/licenses>.
  */
 
-package com.gjkf.lwjgl3;
+package com.gjkf.lwjgl3.util;
 
-import com.gjkf.lwjgl3.test.Test;
-import org.lwjgl.glfw.Callbacks;
-import org.lwjgl.glfw.GLFWErrorCallback;
+public class Point2I{
 
-import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+    private int x, y;
 
-public class Main{
-
-    public static void main(String[] args){
-        GLFWErrorCallback errorCallback = Callbacks.errorCallbackPrint(System.err);
-        glfwSetErrorCallback(errorCallback);
-
-        new Test();
+    public Point2I(int x, int y){
+        this.x = x;
+        this.y = y;
     }
 
+    public int getX(){
+        return x;
+    }
+
+    public void setX(int x){
+        this.x = x;
+    }
+
+    public int getY(){
+        return y;
+    }
+
+    public void setY(int y){
+        this.y = y;
+    }
 }
